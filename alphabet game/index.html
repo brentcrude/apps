@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s;
+        }
+        
+        body.bg-green {
+            background: #4caf50;
+        }
+        
+        body.bg-red {
+            background: #f44336;
+        }
+        
+        #letter {
+            font-size: 200px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        #feedback {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        #stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        #timer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        #username-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+        
+        #username-section h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        #username-input {
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            width: 200px;
+            margin-bottom: 20px;
+        }
+        
+        #username-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        
+        #high-score {
+            color: white;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        #game-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="username-section">
+        <h1>Enter Username</h1>
+        <input type="text" id="username-input" placeholder="Your username">
+        <button onclick="startGame()">Start Game</button>
+        <div id="high-score"></div>
+    </div>
+    
+    <div id="game-container">
+        <div id="timer">Time: 60s</div>
+        <div id="stats">Points: 0</div>
+        <div id="letter">A</div>
+        <div class="button-group">
+            <button onclick="answerRight()">Right</button>
+            <button onclick="answerWrong()">Wrong</button>
+        </div>
+    </div>
+    
+    <script>
+        let points = 0;
+        let seconds = 60;
+        let timerInterval;
+        let letterWeights = {};
+        let currentUsername = '';
+        let gameActive = false;
+        let highScores = {};
+        
+        function loadHighScores() {
+            const stored = localStorage.getItem('highScores');
+            if (stored) {
+                highScores = JSON.parse(stored);
+            }
+        }
+        
+        function saveHighScores() {
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+        }
+        
+        function initializeWeights() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            letters.forEach(letter => {
+                letterWeights[letter] = 1;
+            });
+        }
+        
+        function generateLetter() {
+            const letters = Object.keys(letterWeights);
+            if (letters.length === 0) return;
+            const totalWeight = letters.reduce((sum, letter) => sum + letterWeights[letter], 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let letter of letters) {
+                random -= letterWeights[letter];
+                if (random <= 0) {
+                    document.getElementById('letter').textContent = letter;
+                    return;
+                }
+            }
+            document.getElementById('letter').textContent = letters[0];
+        }
+        
+        function answerRight() {
+            if (!gameActive) return;
+            points++;
+            document.getElementById('stats').textContent = 'Points: ' + points;
+            const currentLetter = document.getElementById('letter').textContent;
+            letterWeights[currentLetter] = Math.max(1, letterWeights[currentLetter] * 0.8);
+            document.body.classList.add('bg-green');
+            document.body.classList.remove('bg-red');
+            setTimeout(() => {
+                document.body.classList.remove('bg-green');
+            }, 200);
+            generateLetter();
+        }
+        
+        function answerWrong() {
+            if (!gameActive) return;
+            const currentLetter = document.getElementById('letter').textContent;
+            letterWeights[currentLetter] *= 1.5;
+            document.body.classList.add('bg-red');
+            document.body.classList.remove('bg-green');
+            setTimeout(() => {
+                document.body.classList.remove('bg-red');
+            }, 200);
+            generateLetter();
+        }
+        
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                seconds--;
+                document.getElementById('timer').textContent = 'Time: ' + seconds + 's';
+                if (seconds <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function startGame() {
+            currentUsername = document.getElementById('username-input').value.trim();
+            if (!currentUsername) {
+                alert('Please enter a username');
+                return;
+            }
+            
+            document.getElementById('username-section').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+            document.getElementById('game-container').style.flexDirection = 'column';
+            document.getElementById('game-container').style.justifyContent = 'center';
+            document.getElementById('game-container').style.alignItems = 'center';
+            
+            gameActive = true;
+            points = 0;
+            seconds = 60;
+            letterWeights = {};
+            initializeWeights();
+            generateLetter();
+            startTimer();
+        }
+        
+        function endGame() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            if (!highScores[currentUsername] || points > highScores[currentUsername]) {
+                highScores[currentUsername] = points;
+            }
+            
+            console.log('Game Over!');
+            console.log('Username:', currentUsername);
+            console.log('Points:', points);
+            console.log('High Scores:', highScores);
+            
+            saveHighScores();
+            
+            alert('Game Over!\nUsername: ' + currentUsername + '\nPoints: ' + points + '\nHigh Score: ' + highScores[currentUsername]);
+            
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('username-section').style.display = 'block';
+            document.getElementById('username-input').value = '';
+            document.body.classList.remove('bg-green', 'bg-red');
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+        
+        initializeWeights();
+    </script>
+</body>
+</html>
