@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#ffd86b">
+  <meta name="description" content="Letter Pop - a first-letter picture game for toddlers. See a picture, pick the letter it starts with.">
+  <title>Letter Pop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <!-- Start screen: also unlocks audio, which browsers only allow after a tap -->
+    <section id="start-screen" class="screen" aria-label="Start">
+      <h1 class="logo" aria-label="Letter Pop">
+        <span>L</span><span>e</span><span>t</span><span>t</span><span>e</span><span>r</span>
+        <span class="gap"></span>
+        <span>P</span><span>o</span><span>p</span>
+      </h1>
+      <div class="start-emoji" aria-hidden="true">🍎 🐶 🐱</div>
+      <button id="play-btn" class="big-btn" type="button" aria-label="Play">▶</button>
+    </section>
+
+    <!-- Game screen -->
+    <section id="game-screen" class="screen hidden" aria-label="Game">
+      <header class="top-bar">
+        <div id="stars" class="stars" role="img" aria-label="Stars earned"></div>
+        <button id="mute-btn" class="icon-btn" type="button" aria-label="Turn sound off" aria-pressed="false">🔊</button>
+      </header>
+
+      <button id="picture" class="picture" type="button" aria-label="Picture. Tap to hear it again.">
+        <span id="picture-emoji" class="picture-emoji" aria-hidden="true"></span>
+      </button>
+
+      <div id="choices" class="choices" role="group" aria-label="Pick the first letter"></div>
+    </section>
+
+    <!-- Celebration after a full row of stars -->
+    <section id="win-screen" class="screen hidden" aria-label="You did it">
+      <div class="trophy" aria-hidden="true">🏆</div>
+      <div class="win-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
+      <button id="again-btn" class="big-btn" type="button" aria-label="Play again">↻</button>
+    </section>
+  </main>
+
+  <div id="confetti" aria-hidden="true"></div>
+
+  <script src="game-logic.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

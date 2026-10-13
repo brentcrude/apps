@@ -1,0 +1,15 @@
+{
+  "name": "letter-pop",
+  "version": "1.0.0",
+  "description": "A first-letter picture game for toddlers. See a picture, pick the letter it starts with.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "test": "node --test tests/",
+    "test:logic": "node --test tests/logic.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0"
+  }
+}

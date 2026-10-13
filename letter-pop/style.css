@@ -1,0 +1,217 @@
+/* Letter Pop - toddler friendly styles.
+   Big tap targets, bright colours, rounded everything, no tiny text. */
+
+:root {
+  --bg-1: #ffe9a8;
+  --bg-2: #ffd86b;
+  --ink: #3b2a63;
+  --card: #ffffff;
+  --c-red: #ff6b6b;
+  --c-blue: #4dabf7;
+  --c-green: #51cf66;
+  --c-purple: #b197fc;
+  --shadow: 0 8px 0 rgba(59, 42, 99, 0.18);
+  --radius: 36px;
+  --emoji-font: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  --letter-font: "Baloo 2", "Fredoka", "Arial Rounded MT Bold", "Nunito", "Trebuchet MS", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  color: var(--ink);
+  font-family: var(--letter-font);
+  /* stop double-tap zoom and text selection from interrupting little fingers */
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+#app {
+  height: 100%;
+  height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+}
+
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vh;
+}
+.hidden { display: none !important; }
+
+/* ---------- start screen ---------- */
+.logo {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: clamp(3rem, 14vw, 6rem);
+  line-height: 1;
+}
+.logo span { display: inline-block; animation: bob 2.4s ease-in-out infinite; }
+.logo span:nth-child(odd)  { color: var(--c-red); }
+.logo span:nth-child(3n)   { color: var(--c-blue); }
+.logo span:nth-child(4n)   { color: var(--c-green); }
+.logo span:nth-child(5n)   { color: var(--c-purple); }
+.logo span.gap { width: 0.4em; }
+.logo span:nth-child(2) { animation-delay: .1s; } .logo span:nth-child(3) { animation-delay: .2s; }
+.logo span:nth-child(4) { animation-delay: .3s; } .logo span:nth-child(5) { animation-delay: .4s; }
+.logo span:nth-child(6) { animation-delay: .5s; } .logo span:nth-child(8) { animation-delay: .6s; }
+.logo span:nth-child(9) { animation-delay: .7s; } .logo span:nth-child(10) { animation-delay: .8s; }
+
+.start-emoji { font-family: var(--emoji-font); font-size: clamp(3rem, 14vw, 5rem); letter-spacing: .1em; }
+
+.big-btn {
+  width: min(40vw, 200px);
+  height: min(40vw, 200px);
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-green);
+  color: #fff;
+  font-size: clamp(4rem, 18vw, 6.5rem);
+  font-family: var(--letter-font);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.big-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(59, 42, 99, 0.18); }
+
+/* ---------- game screen ---------- */
+#game-screen { justify-content: flex-start; gap: 2.5vh; padding-top: 12px; }
+
+.top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+}
+.stars { display: flex; gap: 4px; flex-wrap: wrap; font-size: clamp(1.1rem, 4.5vw, 1.6rem); font-family: var(--emoji-font); }
+.star { filter: grayscale(1) opacity(0.35); transition: transform .3s, filter .3s; }
+.star.on { filter: none; transform: scale(1.15); }
+
+.icon-btn {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--card);
+  font-size: 1.6rem;
+  box-shadow: 0 4px 0 rgba(59, 42, 99, 0.18);
+  cursor: pointer;
+}
+
+.picture {
+  width: min(78vw, 42vh, 340px);
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: none;
+}
+.picture:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(59, 42, 99, 0.18); }
+.picture-emoji {
+  font-family: var(--emoji-font);
+  font-size: min(48vw, 25vh, 210px);
+  line-height: 1;
+}
+.picture.pop-in .picture-emoji { animation: popIn .45s cubic-bezier(.2, 1.6, .4, 1); }
+.picture.cheer .picture-emoji { animation: cheer .7s ease-in-out; }
+
+.choices {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  max-height: 46vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+  padding-bottom: 14px;
+}
+
+.choice {
+  border: 0;
+  border-radius: var(--radius);
+  font-family: var(--letter-font);
+  font-weight: 800;
+  font-size: min(26vw, 14vh, 130px);
+  line-height: 1;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  min-height: 80px;
+  transition: transform .1s, filter .25s, opacity .25s;
+}
+.choice:nth-child(1) { background: var(--c-red); }
+.choice:nth-child(2) { background: var(--c-blue); }
+.choice:nth-child(3) { background: var(--c-green); }
+.choice:nth-child(4) { background: var(--c-purple); }
+.choice:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 2px 0 rgba(59, 42, 99, 0.18); }
+
+/* wrong: wobble then fade out (still no penalty - just try another letter) */
+.choice.wrong { animation: wobble .5s; opacity: .25; filter: grayscale(.8); cursor: default; }
+/* right: grow and glow, others fade */
+.choice.correct { animation: bounce .6s; box-shadow: 0 0 0 10px rgba(255, 255, 255, .85), 0 0 40px 10px rgba(255, 255, 255, .9); transform: scale(1.06); }
+.choices.solved .choice:not(.correct) { opacity: .3; }
+.choice:disabled { cursor: default; }
+
+/* ---------- win screen ---------- */
+.trophy { font-family: var(--emoji-font); font-size: clamp(7rem, 40vw, 12rem); animation: bounce 1s infinite; }
+.win-stars { font-family: var(--emoji-font); font-size: clamp(2rem, 10vw, 3.5rem); letter-spacing: .1em; }
+
+/* ---------- confetti ---------- */
+#confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 10; }
+.confetti-piece {
+  position: absolute;
+  top: -5vh;
+  width: 14px;
+  height: 22px;
+  border-radius: 4px;
+  animation: fall linear forwards;
+}
+
+/* ---------- animations ---------- */
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes popIn { 0% { transform: scale(0) rotate(-20deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes cheer { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.2) rotate(-10deg); } 75% { transform: scale(1.2) rotate(10deg); } }
+@keyframes bounce { 0%, 100% { transform: scale(1.06) translateY(0); } 40% { transform: scale(1.12) translateY(-16px); } 60% { transform: scale(1.06) translateY(0); } }
+@keyframes wobble { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-8deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-5deg); } 80% { transform: rotate(5deg); } }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+/* keep it calm for kids (or parents) who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* short landscape screens (phones on their side): picture left, letters right */
+@media (orientation: landscape) and (max-height: 520px) {
+  #game-screen { display: grid; grid-template-columns: 1fr 1.2fr; grid-template-rows: auto 1fr; align-content: stretch; }
+  .top-bar { grid-column: 1 / -1; }
+  .picture { width: min(40vw, 62vh); justify-self: center; align-self: center; }
+  .picture-emoji { font-size: min(28vw, 40vh); }
+  .choices { max-height: none; height: 100%; }
+  .choice { font-size: min(14vw, 24vh); }
+}
